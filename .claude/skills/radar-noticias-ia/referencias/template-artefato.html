@@ -1,0 +1,405 @@
+<title>Radar de IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ---- Paleta: tinta sobre papel, acento verde-petróleo, ouro só para o que é novo ---- */
+  :root {
+    --papel:      #F6F5F2;
+    --papel-alt:  #EFEDE7;
+    --tinta:      #1A1C1E;
+    --tinta-fraca:#62666C;
+    --regua:      #DEDAD2;
+    --acento:     #174F45;
+    --acento-sut: #E3EBE7;
+    --ouro:       #8A6D1F;
+    --ouro-sut:   #F2EBD8;
+    --foco:       #174F45;
+
+    --fonte-titulo: "Newsreader", Georgia, "Times New Roman", serif;
+    --fonte-corpo:  "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    --fonte-dado:   "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --papel:      #151714;
+      --papel-alt:  #1D201C;
+      --tinta:      #E9E7E1;
+      --tinta-fraca:#9AA09B;
+      --regua:      #2E322D;
+      --acento:     #6FB3A1;
+      --acento-sut: #1C2A26;
+      --ouro:       #C9A84C;
+      --ouro-sut:   #2A2519;
+      --foco:       #6FB3A1;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel:      #151714;
+    --papel-alt:  #1D201C;
+    --tinta:      #E9E7E1;
+    --tinta-fraca:#9AA09B;
+    --regua:      #2E322D;
+    --acento:     #6FB3A1;
+    --acento-sut: #1C2A26;
+    --ouro:       #C9A84C;
+    --ouro-sut:   #2A2519;
+    --foco:       #6FB3A1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--fonte-corpo);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 0 64px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .folha { max-width: 44rem; margin-inline: auto; }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* ---- Cabeçalho ---- */
+  .cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-block: 36px 20px;
+    border-bottom: 2px solid var(--tinta);
+  }
+  .marca {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(2rem, 7vw, 2.9rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .expediente {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-family: var(--fonte-dado);
+    font-size: 0.75rem;
+    color: var(--tinta-fraca);
+    font-variant-numeric: tabular-nums;
+  }
+  .expediente b { color: var(--tinta); font-weight: 500; }
+
+  .aviso {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--ouro-sut);
+    border-left: 3px solid var(--ouro);
+    font-size: 0.875rem;
+  }
+
+  /* ---- Linha do tempo dos 7 dias ---- */
+  .dias {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--regua);
+  }
+  .dia {
+    flex: 0 0 auto;
+    font-family: var(--fonte-dado);
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    background: none;
+    border: 1px solid var(--regua);
+    border-radius: 999px;
+    color: var(--tinta-fraca);
+    cursor: pointer;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .dia[aria-pressed="true"] {
+    background: var(--acento);
+    border-color: var(--acento);
+    color: var(--papel);
+  }
+
+  /* ---- Resumo executivo ---- */
+  .resumo { padding-block: 28px; border-bottom: 1px solid var(--regua); }
+  .rotulo {
+    font-family: var(--fonte-dado);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tinta-fraca);
+    margin: 0 0 12px;
+  }
+  .resumo ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; }
+  .resumo li::marker { color: var(--acento); }
+  .observar {
+    margin: 18px 0 0;
+    font-family: var(--fonte-titulo);
+    font-size: 1.0625rem;
+    font-style: italic;
+    color: var(--tinta-fraca);
+  }
+
+  /* ---- Controles ---- */
+  .controles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--regua);
+  }
+  .chip {
+    font-family: var(--fonte-dado);
+    font-size: 0.72rem;
+    padding: 5px 10px;
+    border: 1px solid var(--regua);
+    border-radius: 999px;
+    background: none;
+    color: var(--tinta-fraca);
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--acento-sut);
+    border-color: var(--acento);
+    color: var(--acento);
+  }
+
+  /* ---- Lista numerada: a posição É o ranking ---- */
+  .itens { display: flex; flex-direction: column; }
+  .item {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 4px 14px;
+    padding-block: 28px;
+    border-bottom: 1px solid var(--regua);
+  }
+  .posicao {
+    font-family: var(--fonte-dado);
+    font-size: 1.5rem;
+    color: var(--acento);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+  .corpo { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .titulo {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .titulo a { text-decoration-color: var(--regua); text-underline-offset: 3px; }
+  .titulo a:hover { text-decoration-color: var(--acento); }
+
+  .credito {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-family: var(--fonte-dado);
+    font-size: 0.72rem;
+    color: var(--tinta-fraca);
+    font-variant-numeric: tabular-nums;
+  }
+  .selo {
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--regua);
+  }
+  .selo--t0 { border-color: var(--acento); color: var(--acento); background: var(--acento-sut); }
+  .selo--t1 { border-color: var(--acento); color: var(--acento); }
+  .selo--novo { border-color: var(--ouro); color: var(--ouro); background: var(--ouro-sut); }
+
+  .item p { margin: 0; }
+  .importa {
+    border-left: 2px solid var(--acento);
+    padding-left: 14px;
+    color: var(--tinta-fraca);
+  }
+  .importa b {
+    color: var(--tinta);
+    font-weight: 600;
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--fonte-dado);
+    margin-bottom: 3px;
+  }
+  .verificacao {
+    font-family: var(--fonte-dado);
+    font-size: 0.7rem;
+    color: var(--tinta-fraca);
+  }
+
+  .vazio { padding-block: 48px; color: var(--tinta-fraca); text-align: center; }
+
+  .rodape {
+    padding-top: 28px;
+    font-size: 0.8125rem;
+    color: var(--tinta-fraca);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  @media (max-width: 480px) {
+    .item { grid-template-columns: 1fr; gap: 8px; }
+    .posicao { font-size: 1.1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="folha">
+  <header class="cabecalho">
+    <h1 class="marca">Radar de IA</h1>
+    <div class="expediente" id="expediente"></div>
+  </header>
+
+  <div id="avisos"></div>
+  <nav class="dias" id="dias" aria-label="Últimos sete dias"></nav>
+
+  <section class="resumo" id="resumo"></section>
+  <div class="controles" id="controles"></div>
+  <main class="itens" id="itens"></main>
+
+  <footer class="rodape" id="rodape"></footer>
+</div>
+
+<script>
+// A skill substitui a linha abaixo pelos JSONs dos últimos 7 dias, do mais recente
+// para o mais antigo. A página é autocontida: nenhum fetch em runtime, porque uma
+// página que busca dados de fora quebra em silêncio quando o repositório é privado.
+const DADOS = /*__DADOS__*/ [];
+
+const REPO = "https://github.com/mpsanchez28/MBAExecutivo260912";
+const $ = (id) => document.getElementById(id);
+
+let diaAtual = 0;
+let tagAtiva = null;
+let soNovas = false;
+
+const porExtenso = (iso) => {
+  const [a, m, d] = iso.split("-").map(Number);
+  const meses = ["janeiro","fevereiro","março","abril","maio","junho",
+                 "julho","agosto","setembro","outubro","novembro","dezembro"];
+  return `${d} de ${meses[m - 1]} de ${a}`;
+};
+const curto = (iso) => iso.slice(8, 10) + "/" + iso.slice(5, 7);
+
+function render() {
+  const dia = DADOS[diaAtual];
+
+  if (!dia) {
+    $("itens").innerHTML = `<p class="vazio">Nenhum registro publicado ainda.
+      A primeira execução do radar preenche esta página.</p>`;
+    $("expediente").textContent = "";
+    return;
+  }
+
+  const itens = dia.itens || [];
+  const novas = itens.filter((i) => i.status_temporal === "NOVO").length;
+  const evol = itens.filter((i) => i.status_temporal !== "NOVO").length;
+
+  $("expediente").innerHTML = `
+    <span><b>${porExtenso(dia.data_execucao)}</b></span>
+    <span>janela ${curto(dia.janela.inicio)}–${curto(dia.janela.fim)}</span>
+    <span><b>${novas}</b> novas · <b>${evol}</b> em evolução</span>
+    <span>atualizado ${dia.atualizado_em_brt || dia.data_execucao} BRT</span>`;
+
+  // Avisos: status parcial, lacuna de execução, pendências repetidas
+  const avisos = [];
+  if (dia.status_execucao && dia.status_execucao !== "ok") {
+    avisos.push(`Execução <b>${dia.status_execucao}</b>: ${dia.aviso || "a pesquisa não cobriu tudo o que deveria."}`);
+  }
+  (dia.falhas || []).forEach((f) => avisos.push(typeof f === "string" ? f : f.detalhe));
+  $("avisos").innerHTML = avisos.length
+    ? `<div class="aviso">${avisos.join("<br>")}</div>` : "";
+
+  // Linha do tempo
+  $("dias").innerHTML = DADOS.map((d, i) =>
+    `<button class="dia" type="button" aria-pressed="${i === diaAtual}" data-i="${i}">
+       ${curto(d.data_execucao)}</button>`).join("");
+
+  // Resumo executivo
+  const r = dia.resumo_executivo || {};
+  $("resumo").innerHTML = `
+    <p class="rotulo">Resumo executivo da semana</p>
+    <ul>${(r.bullets || []).map((b) => `<li>${b}</li>`).join("")}</ul>
+    ${r.observar ? `<p class="observar">O que observar: ${r.observar}</p>` : ""}`;
+
+  // Filtros
+  const tags = [...new Set(itens.flatMap((i) => i.tags || []))].sort();
+  $("controles").innerHTML = `
+    <button class="chip" type="button" data-novas aria-pressed="${soNovas}">só novidades de hoje</button>
+    ${tags.map((t) => `<button class="chip" type="button" data-tag="${t}"
+        aria-pressed="${tagAtiva === t}">${t}</button>`).join("")}`;
+
+  // Itens
+  const visiveis = itens.filter((i) =>
+    (!soNovas || i.status_temporal === "NOVO") &&
+    (!tagAtiva || (i.tags || []).includes(tagAtiva)));
+
+  $("itens").innerHTML = visiveis.length
+    ? visiveis.map(cartao).join("")
+    : `<p class="vazio">Nenhum item com esse filtro.</p>`;
+
+  $("rodape").innerHTML = `
+    <a href="${REPO}/blob/main/radar-ia/registros/${dia.data_execucao.slice(0,4)}/${dia.data_execucao}.md">Registro completo do dia</a>
+    <a href="${REPO}">Repositório</a>
+    <span>Fontes verificadas uma a uma. Nenhum link é publicado sem ter sido aberto.</span>`;
+}
+
+function cartao(i) {
+  const tier = (i.tier || "").toLowerCase();
+  const fonte = i.fonte || {};
+  return `
+  <article class="item">
+    <div class="posicao">${String(i.posicao).padStart(2, "0")}</div>
+    <div class="corpo">
+      <h2 class="titulo"><a href="${i.link}" target="_blank" rel="noopener noreferrer">${i.titulo}</a></h2>
+      <div class="credito">
+        <span>${fonte.nome || ""}${fonte.natureza ? " · " + fonte.natureza : ""}</span>
+        <span>${i.data_publicacao || ""}</span>
+        <span class="selo selo--${tier}">${i.tier || ""}</span>
+        ${i.status_temporal === "NOVO"
+            ? `<span class="selo selo--novo">novo</span>`
+            : `<span class="selo">em evolução · ${i.dias_reportado || 1}º dia</span>`}
+        ${i.paywall ? `<span class="selo">paywall</span>` : ""}
+      </div>
+      <p>${i.resumo || ""}</p>
+      <p class="importa"><b>Por que importa</b>${i.por_que_importa || ""}</p>
+      <p class="verificacao">${(i.verificacao || {}).status || ""} — ${(i.verificacao || {}).notas || ""}</p>
+    </div>
+  </article>`;
+}
+
+document.addEventListener("click", (e) => {
+  const dia = e.target.closest("[data-i]");
+  const tag = e.target.closest("[data-tag]");
+  const nov = e.target.closest("[data-novas]");
+  if (dia) { diaAtual = Number(dia.dataset.i); tagAtiva = null; soNovas = false; render(); }
+  else if (tag) { tagAtiva = tagAtiva === tag.dataset.tag ? null : tag.dataset.tag; render(); }
+  else if (nov) { soNovas = !soNovas; render(); }
+});
+
+render();
+</script>

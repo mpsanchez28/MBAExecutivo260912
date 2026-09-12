@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Skill",
+      "WebSearch",
+      "WebFetch",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git checkout:*)",
+      "Bash(date:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(jq:*)",
+      "mcp__Gmail__send_message"
+    ]
+  }
+}
