@@ -22,6 +22,14 @@ Detecte e trate:
 | Assunto divergente do título do candidato | Descartar — sinal clássico de URL montada por inferência |
 | Paywall duro (menos de ~300 caracteres úteis) | Buscar o mesmo fato em fonte aberta. Sem alternativa: `paywall: true` e **fora do top 10** |
 
+**Domínios bloqueados.** Alguns veículos recusam o nosso user agent e a ferramenta
+devolve erro antes de qualquer tentativa (`reuters.com`, `apnews.com`, `ft.com`, `wsj.com`,
+`theverge.com`, `arstechnica.com`, `wired.com` — lista completa e atualizada em
+`fontes-confiaveis.md`). Isso é falha de V1 como qualquer outra: o item não entra no top 10
+por essa fonte. Procure o fato numa fonte primária ou num veículo acessível. Ao encontrar um
+domínio recusado que não está catalogado, **acrescente-o a `fontes-confiaveis.md` no commit
+do dia**.
+
 ### V2 — Data de publicação
 
 Extraia a data de, em ordem de preferência:
