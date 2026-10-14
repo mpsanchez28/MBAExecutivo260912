@@ -67,6 +67,16 @@ o que mudou desde ontem sem perder o panorama da semana.
 | `radar-ia/dados/<ano>/` | Mesmo conteúdo em JSON (fonte da verdade) |
 | `radar-ia/artefato/radar-ia.html` | Cópia do último HTML publicado |
 
+## Para colocar em funcionamento
+
+O agente está pronto, mas o agendamento depende de dois pré-requisitos de ambiente e da
+criação da Routine pela interface do claude.ai. O passo a passo, com o texto exato do
+prompt para colar, está em **[`radar-ia/CONFIGURACAO.md`](radar-ia/CONFIGURACAO.md)**.
+
+Em resumo: o ambiente precisa de **acesso de rede amplo** (sem isso o agente não abre os
+links e, por desenho, não publica nada) e a Routine precisa do **conector do Gmail**
+anexado — algo que só a interface permite.
+
 ## Uso manual
 
 - **Rodar agora:** peça "roda o radar de IA" numa sessão do Claude Code neste repositório.
